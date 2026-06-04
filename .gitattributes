@@ -1,3 +1,0 @@
-# Keep Django templates and static styling out of GitHub language percentages.
-*.html linguist-vendored
-*.css linguist-vendored
