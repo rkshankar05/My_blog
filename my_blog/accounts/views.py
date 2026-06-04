@@ -8,38 +8,18 @@ from django.contrib.auth import authenticate,login,logout
 from django.core.mail import send_mail
 from django.contrib import messages
 from . models import Blog,Profile
-from django.db.models import Q
 from django.utils import timezone
-from PIL import Image, UnidentifiedImageError
 import secrets
+from .permissions import is_blog_owner
+from .services import get_all_posts, get_user_posts, search_posts
+from .validators import validate_image
 
 OTP_EXPIRY_MINUTES = 10
 OTP_MAX_ATTEMPTS = 5
-MAX_IMAGE_SIZE = 5 * 1024 * 1024
-ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/gif", "image/webp"}
-
-
-def is_valid_image(uploaded_file):
-    if not uploaded_file:
-        return False, "Please upload an image."
-
-    if uploaded_file.size > MAX_IMAGE_SIZE:
-        return False, "Image size must be 5 MB or less."
-
-    if uploaded_file.content_type not in ALLOWED_IMAGE_TYPES:
-        return False, "Only JPG, PNG, GIF, or WEBP images are allowed."
-
-    try:
-        Image.open(uploaded_file).verify()
-    except (UnidentifiedImageError, OSError):
-        return False, "Uploaded file is not a valid image."
-
-    uploaded_file.seek(0)
-    return True, ""
 
 # Create your views here.
 def home(request):
-    blogs = Blog.objects.all()
+    blogs = get_all_posts()
     return render(request,'home.html',{"blogs":blogs})
 
 def sigin(request):
@@ -111,7 +91,7 @@ def add_blog(request):
         name = request.POST["name"].strip()
         messeage = request.POST["messeage"].strip()
         image = request.FILES.get('image')
-        valid_image, image_error = is_valid_image(image)
+        valid_image, image_error = validate_image(image)
 
         if not valid_image:
             messages.error(request, image_error)
@@ -130,7 +110,7 @@ def add_blog(request):
 
 @login_required
 def gallery(request):
-    blogs = Blog.objects.filter(user=request.user).order_by('-id')
+    blogs = get_user_posts(request.user)
     return render(request,"gallery.html",{'blogs':blogs})
 
 @login_required
@@ -141,8 +121,8 @@ def user_logout(request):
 
 @login_required
 def edit(request,id):
-    blog = Blog.objects.filter(id=id, user=request.user).first()
-    if not blog:
+    blog = Blog.objects.filter(id=id).first()
+    if not blog or not is_blog_owner(request.user, blog):
         messages.error(request, "This blog was not found or you do not have permission to edit it.")
         return redirect('gallery')
 
@@ -152,7 +132,7 @@ def edit(request,id):
         image = request.FILES.get('image')
 
         if image:
-            valid_image, image_error = is_valid_image(image)
+            valid_image, image_error = validate_image(image)
             if not valid_image:
                 messages.error(request, image_error)
                 return redirect('edit', id=blog.id)
@@ -166,8 +146,8 @@ def edit(request,id):
 
 @login_required
 def delete(request,id):
-    blog = Blog.objects.filter(id=id, user=request.user).first()
-    if not blog:
+    blog = Blog.objects.filter(id=id).first()
+    if not blog or not is_blog_owner(request.user, blog):
         messages.error(request, "This blog was already deleted or you do not have permission to delete it.")
         return redirect('gallery')
 
@@ -182,7 +162,7 @@ def delete(request,id):
 def profile(request):
     user = request.user
     # Get only the logged-in user's blogs
-    user_blogs = Blog.objects.filter(user=request.user).order_by('-id')
+    user_blogs = get_user_posts(request.user)
     total_blogs = user_blogs.count()
     data = {
         "total": total_blogs,
@@ -199,14 +179,7 @@ def forget(request):
 
 def search(request):
     query = request.GET.get("q", "").strip()
-    results = Blog.objects.none()
-
-    if query:
-        results = Blog.objects.filter(
-            Q(name__icontains=query)
-            | Q(messeage__icontains=query)
-            | Q(user__username__icontains=query)
-        )
+    results = search_posts(query)
 
     if query and results.exists():
         messages.info(request,"Searched Blog")
@@ -244,7 +217,7 @@ def edit_profile(request,id):
 
             profile.dob = dob
             if image:
-                valid_image, image_error = is_valid_image(image)
+                valid_image, image_error = validate_image(image)
                 if not valid_image:
                     messages.error(request, image_error)
                     return redirect('edit_profile', id=user.id)
