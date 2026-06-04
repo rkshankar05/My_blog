@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Delete Blog</title>
+{% endblock title %}
+
+{% block css %}
+<style>
+body {
+    background: radial-gradient(circle at top, #111827, #020617 55%, #000 100%);
+    color: #e5e7eb;
+}
+
+.delete-wrapper {
+    min-height: calc(100vh - 70px);
+    padding: 90px 18px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-panel {
+    width: min(100%, 520px);
+    border: 1px solid #374151;
+    border-radius: 8px;
+    background: #020617;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.65);
+    overflow: hidden;
+}
+
+.delete-image {
+    height: 220px;
+    background: #111827;
+    overflow: hidden;
+}
+
+.delete-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.delete-body {
+    padding: 28px;
+}
+
+.delete-kicker {
+    color: #fca5a5;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.delete-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.delete-text {
+    color: #cbd5e1;
+    line-height: 1.6;
+    margin-bottom: 24px;
+}
+
+.delete-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.delete-btn,
+.cancel-btn {
+    flex: 1;
+    min-height: 46px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-weight: 700;
+    border: 0;
+}
+
+.delete-btn {
+    background: #dc2626;
+    color: #fff;
+}
+
+.delete-btn:hover {
+    background: #b91c1c;
+}
+
+.cancel-btn {
+    background: #1f2937;
+    color: #e5e7eb;
+}
+
+.cancel-btn:hover {
+    background: #374151;
+    color: #fff;
+}
+
+.delete-form {
+    flex: 1;
+    margin: 0;
+    display: flex;
+}
+
+@media (max-width: 520px) {
+    .delete-body {
+        padding: 22px;
+    }
+
+    .delete-actions {
+        flex-direction: column;
+    }
+}
+</style>
+{% endblock css %}
+
+{% block content %}
+<div class="delete-wrapper">
+    <div class="delete-panel">
+        {% if blog.image %}
+        <div class="delete-image">
+            <img src="{{ blog.image.url }}" alt="{{ blog.name }}">
+        </div>
+        {% endif %}
+
+        <div class="delete-body">
+            <div class="delete-kicker">Confirm delete</div>
+            <div class="delete-title">{{ blog.name }}</div>
+            <p class="delete-text">
+                This blog will be permanently deleted from your gallery.
+            </p>
+
+            <div class="delete-actions">
+                <a href="{% url 'gallery' %}" class="cancel-btn">Cancel</a>
+                <form method="post" action="{% url 'delete' blog.id %}" class="delete-form">
+                    {% csrf_token %}
+                    <button type="submit" class="delete-btn">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

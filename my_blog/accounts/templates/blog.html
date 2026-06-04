@@ -1,0 +1,391 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Add Blog</title>
+{% endblock title %}
+
+{% block css %}
+<style>
+    .blog-wrapper {
+        padding: 80px 20px 50px;
+        min-height: calc(100vh - 70px);
+    }
+
+    .blog-container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: #1e293b;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        overflow: hidden;
+        border: 1px solid #334155;
+    }
+
+    .blog-header {
+        background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+        padding: 40px 30px;
+        text-align: center;
+        position: relative;
+    }
+
+    .blog-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 20px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(10px);
+    }
+
+    .blog-icon img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 50%;
+}
+
+
+
+    .blog-header h2 {
+        color: white;
+        font-size: 32px;
+        margin: 0;
+        font-weight: 700;
+    }
+
+    .blog-header p {
+        color: rgba(255, 255, 255, 0.9);
+        margin: 10px 0 0;
+        font-size: 15px;
+    }
+
+    .blog-form {
+        padding: 50px 40px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 30px;
+    }
+
+    .form-section {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+    }
+
+    .form-field {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-field label {
+        color: #cbd5e1;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+
+    .form-field input[type="text"],
+    .form-field textarea {
+        width: 100%;
+        padding: 14px 16px;
+        background: #0f172a;
+        border: 2px solid #334155;
+        border-radius: 10px;
+        color: #f1f5f9;
+        font-size: 15px;
+        transition: all 0.3s ease;
+    }
+
+    .form-field input[type="text"]:focus,
+    .form-field textarea:focus {
+        outline: none;
+        border-color: #3b82f6;
+        background: #1e293b;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    .form-field textarea {
+        resize: vertical;
+        min-height: 180px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .file-upload-wrapper {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .file-upload-wrapper input[type="file"] {
+        position: absolute;
+        left: -9999px;
+    }
+
+    .file-upload-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 14px 20px;
+        background: #0f172a;
+        border: 2px dashed #334155;
+        border-radius: 10px;
+        color: #94a3b8;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-height: 88px;
+        text-align: center;
+    }
+
+    .file-upload-label:hover,
+    .file-upload-wrapper.is-dragging .file-upload-label {
+        border-color: #3b82f6;
+        background: #1e293b;
+        color: #3b82f6;
+    }
+
+    .file-upload-wrapper.has-file .file-upload-label {
+        border-color: #16a34a;
+        background: rgba(22, 163, 74, 0.08);
+        color: #bbf7d0;
+    }
+
+    .file-upload-wrapper.has-error .file-upload-label {
+        border-color: #dc2626;
+        background: rgba(220, 38, 38, 0.1);
+        color: #fecaca;
+    }
+
+    .file-upload-label svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .file-name {
+        color: #3b82f6;
+        font-size: 14px;
+        margin-top: 8px;
+        display: none;
+    }
+
+    .submit-section {
+        margin-top: 30px;
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+    }
+
+    .btn-submit {
+        padding: 15px 40px;
+        background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-cancel {
+        padding: 15px 40px;
+        background: transparent;
+        color: #94a3b8;
+        border: 2px solid #334155;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-cancel:hover {
+        border-color: #64748b;
+        color: #cbd5e1;
+        text-decoration: none;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .blog-wrapper {
+            padding: 40px 15px 30px;
+        }
+
+        .blog-header {
+            padding: 30px 20px;
+        }
+
+        .blog-header h2 {
+            font-size: 26px;
+        }
+
+        .blog-icon {
+            width: 70px;
+            height: 70px;
+        }
+
+        .blog-form {
+            padding: 30px 25px;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+
+        .submit-section {
+            flex-direction: column;
+        }
+
+        .btn-submit,
+        .btn-cancel {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .blog-header h2 {
+            font-size: 22px;
+        }
+
+        .blog-form {
+            padding: 25px 20px;
+        }
+
+        .form-field input[type="text"],
+        .form-field textarea {
+            padding: 12px 14px;
+            font-size: 14px;
+        }
+    }
+</style>
+{% endblock css %}
+
+{% block content %}
+<div class="blog-wrapper">
+    <div class="blog-container">
+        <div class="blog-header">
+            <div class="blog-icon">
+                 <img src="{% static 'images/logo.png' %}" alt="NRK Logo" class="logo-img">
+            </div>
+            <h2>Create New Blog Post</h2>
+            <p>Share your thoughts with the community</p>
+        </div>
+
+        <form class="blog-form" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="form-grid">
+                <div class="form-section">
+                    <div class="form-field">
+                        <label for="name">Blog Title</label>
+                        <input type="text" name="name" id="name" placeholder="Enter an engaging title..." required>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="image">Featured Image</label>
+                        <div class="file-upload-wrapper">
+                            <input type="file" id="image" name="image" accept="image/*" onchange="displayFileName(this)">
+                            <label for="image" class="file-upload-label">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                </svg>
+                                Drag image here or choose file
+                            </label>
+                            <p class="file-name" id="fileName"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-field">
+                        <label for="message">Blog Content</label>
+                        <textarea name="messeage" id="message" placeholder="Write your blog content here..." required></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="submit-section">
+                <button type="submit" class="btn-submit">Publish Blog</button>
+                <a href="{% url 'home' %}" class="btn-cancel">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function displayFileName(input, message) {
+    const fileName = document.getElementById('fileName');
+    const wrapper = input.closest('.file-upload-wrapper');
+
+    wrapper.classList.remove('has-file', 'has-error');
+
+    if (message) {
+        fileName.textContent = message;
+        fileName.style.display = 'block';
+        wrapper.classList.add('has-error');
+        return;
+    }
+
+    if (input.files && input.files[0]) {
+        fileName.textContent = input.files[0].name;
+        fileName.style.display = 'block';
+        wrapper.classList.add('has-file');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const wrapper = document.querySelector('.file-upload-wrapper');
+    const input = document.getElementById('image');
+
+    if (!wrapper || !input) return;
+
+    ['dragenter', 'dragover'].forEach(function (eventName) {
+        wrapper.addEventListener(eventName, function (event) {
+            event.preventDefault();
+            wrapper.classList.add('is-dragging');
+        });
+    });
+
+    ['dragleave', 'drop'].forEach(function (eventName) {
+        wrapper.addEventListener(eventName, function (event) {
+            event.preventDefault();
+            wrapper.classList.remove('is-dragging');
+        });
+    });
+
+    wrapper.addEventListener('drop', function (event) {
+        const files = event.dataTransfer.files;
+        if (!files.length) return;
+
+        if (!files[0].type.startsWith('image/')) {
+            input.value = '';
+            displayFileName(input, 'Please drop an image file.');
+            return;
+        }
+
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(files[0]);
+        input.files = dataTransfer.files;
+        displayFileName(input);
+    });
+});
+</script>
+{% endblock content %}

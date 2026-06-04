@@ -1,0 +1,242 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Sign Up</title>
+{% endblock title %}
+
+{% block css %}
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.signup-wrapper {
+    min-height: calc(100vh - 70px);
+    padding: 80px 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Card */
+.signup-card {
+    width: 100%;
+    max-width: 520px;
+    border-radius: 22px;
+    padding: 46px 38px 40px;
+    background: #020617;
+    border: 1px solid #4b5563;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.9);
+}
+
+/* Bigger heading text */
+.signup-title {
+    font-size: 2rem;            /* bigger */
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.signup-subtitle {
+    font-size: 1.05rem;         /* bigger */
+    color: #9ca3af;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+/* Messages */
+.signup-messages {
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+}
+
+.signup-messages div {
+    padding: 9px 12px;
+    border-radius: 8px;
+    margin-bottom: 6px;
+}
+
+.signup-messages .success {
+    background: rgba(22,163,74,0.12);
+    border: 1px solid rgba(22,163,74,0.9);
+    color: #bbf7d0;
+}
+
+.signup-messages .error {
+    background: rgba(220,38,38,0.12);
+    border: 1px solid rgba(220,38,38,0.9);
+    color: #fecaca;
+}
+
+/* Form grid */
+.signup-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 20px;
+    margin-bottom: 10px;
+}
+
+.signup-grid-full {
+    grid-column: 1 / -1;
+}
+
+/* Bigger labels */
+.form-group label {
+    display: block;
+    font-size: 1.05rem;
+    margin-bottom: 8px;
+    color: #cbd5e1;
+}
+
+/* Bigger inputs + placeholders */
+.form-input {
+    width: 100%;
+    padding: 15px 14px;
+    border-radius: 12px;
+    border: 1px solid #1f2937;
+    background: #020617;
+    color: #f9fafb;
+    font-size: 1.05rem;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-input::placeholder {
+    font-size: 1rem;
+    color: #6b7280;
+}
+
+.form-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 1px #3b82f666;
+}
+
+/* Button */
+.signup-btn {
+    width: 100%;
+    margin-top: 22px;
+    border: none;
+    border-radius: 15px;
+    padding: 12px 20px;
+    font-weight: 600;
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    background: linear-gradient(45deg, #232429ff, #764ba2);
+}
+
+.signup-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+}
+
+
+/* Footer text */
+.signup-footer {
+    margin-top: 20px;
+    font-size: 0.95rem;
+    text-align: center;
+    color: #9ca3af;
+}
+
+.signup-footer a {
+    color: #3b82f6;
+    text-decoration: none;
+}
+
+.signup-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .signup-wrapper {
+        padding: 70px 10px 30px;
+    }
+
+    .signup-card {
+        padding: 34px 20px 28px;
+        max-width: 100%;
+    }
+
+    .signup-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock css %}
+
+
+{% block content %}
+<div class="signup-wrapper">
+    <div class="signup-card">
+        <div class="signup-title">Create account</div>
+        <div class="signup-subtitle">Join the community and start sharing your blogs</div>
+
+        {% if messages %}
+        <div class="signup-messages">
+            {% for message in messages %}
+                <div class="{% if message.tags %}{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="signup-grid">
+                <div class="form-group">
+                    <label for="firstname">First name</label>
+                    <input id="firstname" type="text" name="firstname"
+                           class="form-input" placeholder="John" required>
+                </div>
+                <div class="form-group">
+                    <label for="lastname">Last name</label>
+                    <input id="lastname" type="text" name="lastname"
+                           class="form-input" placeholder="Doe" required>
+                </div>
+
+                <div class="form-group signup-grid-full">
+                    <label for="username">Username</label>
+                    <input id="username" type="text" name="username"
+                           class="form-input" placeholder="johndoe" required>
+                </div>
+
+                <div class="form-group signup-grid-full">
+                    <label for="email">Email address</label>
+                    <input id="email" type="email" name="email"
+                           class="form-input" placeholder="john@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password1">Password</label>
+                    <input id="password1" type="password" name="password1"
+                           class="form-input" placeholder="Enter password" required>
+                </div>
+                <div class="form-group">
+                    <label for="password2">Confirm password</label>
+                    <input id="password2" type="password" name="password2"
+                           class="form-input" placeholder="Confirm password" required>
+                </div>
+            </div>
+
+            <button type="submit" class="signup-btn">Sign up</button>
+        </form>
+
+        <div class="signup-footer">
+            Already have an account?
+            <a href="{% url 'login' %}">Sign in</a>
+        </div>
+    </div>
+</div>
+{% endblock content %}

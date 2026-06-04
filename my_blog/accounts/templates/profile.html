@@ -1,0 +1,487 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Profile</title>
+{% endblock title %}
+
+{% block css %}
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+/* main wrapper */
+.instagram-profile {
+    max-width: 935px;
+    margin: 0 auto;
+    padding: 100px 20px 40px;
+}
+
+/* top card */
+.profile-header {
+    background: #020617;
+    border: 1px solid #1f2937;
+    border-radius: 10px;
+    padding: 40px;
+    margin-bottom: 30px;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.7);
+}
+
+.header-content {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 50px;
+    align-items: center;
+}
+
+.avatar-section {
+    display: flex;
+    justify-content: center;
+}
+
+.profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #3b82f6;
+    padding: 3px;
+    background: #020617;
+}
+
+/* right info */
+.info-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* username + actions row */
+.username-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.username-row-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.username-row-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.username {
+    font-size: 35px;
+    font-weight: 400;
+    color: #9fabb6ff;   /* explicit, same theme */
+}
+
+/* edit profile button aligned right */
+.edit-profile-btn {
+    padding: 15px 40px;
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+    color: #9fabb6ff;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+}
+
+.edit-profile-btn:hover,
+.edit-profile-btn:focus,
+.edit-profile-btn:active {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px rgba(99, 102, 241, 0.5);
+    text-decoration: none;
+}
+
+/* icon uses same color */
+.settings-icon {
+    font-size: 24px;
+    color: #9fabb6ff;
+    cursor: pointer;
+}
+
+/* stats / bio use theme color */
+.stats-row {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.stat {
+    font-size: 16px;
+    color: #9fabb6ff;
+}
+
+.stat strong {
+    font-weight: 600;
+}
+
+.bio-section {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #9fabb6ff;
+}
+
+.full-name {
+    font-weight: 600;
+    color: #9fabb6ff;
+}
+
+.bio-text {
+    color: #9fabb6ff;
+    margin-top: 5px;
+}
+
+.bio-text i {
+    margin-right: 5px;
+    color: #9fabb6ff;
+}
+
+/* TABS */
+.tabs-section {
+    background: #020617;
+    border: 1px solid #1f2937;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    border-bottom: 1px solid #1f2937;
+}
+
+.tab {
+    padding: 15px 0;
+    margin: 0 30px;
+    border: none;
+    background: none;
+    color: #9fabb6ff;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.2s ease;
+}
+
+.tab:hover {
+    color: #9fabb6ff;
+}
+
+.tab.active {
+    color: #9fabb6ff;
+}
+
+.tab.active::after {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #9fabb6ff;
+}
+
+.tab i {
+    margin-right: 6px;
+}
+
+/* POSTS GRID */
+.posts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.post-item {
+    position: relative;
+    padding-bottom: 100%;
+    background: #020617;
+    border: 1px solid #111827;
+    cursor: pointer;
+    overflow: hidden;
+    text-decoration: none;
+    border-radius: 6px;
+    color: #9fabb6ff;
+}
+
+.post-item img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.post-item:hover img {
+    transform: scale(1.05);
+    opacity: 0.9;
+}
+
+.post-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    color: #9fabb6ff;
+    font-weight: 600;
+}
+
+.post-item:hover .post-overlay {
+    opacity: 1;
+}
+
+.blog-title-overlay {
+    padding: 0 20px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    max-width: 90%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-height: 1.4;
+}
+
+.blog-excerpt-overlay {
+    padding: 0 20px;
+    text-align: center;
+    font-size: 12px;
+    max-width: 90%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    opacity: 0.9;
+    line-height: 1.3;
+}
+
+/* EMPTY STATE */
+.no-posts {
+    text-align: center;
+    padding: 80px 20px;
+    background: #020617;
+    border: 1px solid #1f2937;
+    border-radius: 10px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+    color: #9fabb6ff;
+}
+
+.no-posts i {
+    font-size: 64px;
+    margin-bottom: 20px;
+    color: #1f2937;
+}
+
+.no-posts h3 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #9fabb6ff;
+    margin-bottom: 10px;
+}
+
+.no-posts p {
+    font-size: 14px;
+    color: #9fabb6ff;
+}
+
+.create-post-btn {
+    margin-top: 20px;
+    padding: 10px 30px;
+    background: transparent;
+    border: 1px solid #9fabb6ff;
+    color: #9fabb6ff;
+    border-radius: 999px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.create-post-btn:hover {
+    background: rgba(15,23,42,0.7);
+    transform: translateY(-1px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .instagram-profile {
+        padding: 80px 10px 30px;
+    }
+
+    .profile-header {
+        padding: 24px;
+    }
+
+    .header-content {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        text-align: center;
+    }
+
+    .avatar-section {
+        justify-content: center;
+    }
+
+    .profile-pic {
+        width: 120px;
+        height: 120px;
+    }
+
+    .username-row {
+        gap: 16px;
+    }
+
+    .stats-row {
+        justify-content: center;
+    }
+
+    .posts-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 4px;
+    }
+}
+
+@media (max-width: 576px) {
+    .profile-pic {
+        width: 100px;
+        height: 100px;
+    }
+
+    .username {
+        font-size: 22px;
+    }
+
+    .username-row {
+        gap: 10px;
+    }
+
+    .stats-row {
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .stat {
+        font-size: 14px;
+    }
+
+    .posts-grid {
+        gap: 3px;
+    }
+
+    .tab {
+        margin: 0 15px;
+        font-size: 11px;
+    }
+}
+</style>
+{% endblock css %}
+
+{% block content %}
+<div class="instagram-profile">
+    <div class="profile-header">
+        <div class="header-content">
+            <div class="avatar-section">
+                {% if request.user.profile.profile_image %}
+                    <img src="{{ request.user.profile.profile_image.url }}" class="profile-pic" alt="{{ request.user.username }}">
+                {% else %}
+                    <img src="{% static 'images/default_profile.png' %}" class="profile-pic" alt="{{ request.user.username }}">
+                {% endif %}
+            </div>
+
+            <div class="info-section">
+                <div class="username-row">
+                    <div class="username-row-left">
+                        <h1 class="username">{{ request.user.username }}</h1>
+                    </div>
+                    <div class="username-row-right">
+                        <a href="{% url 'edit_profile' request.user.id %}" class="edit-profile-btn">
+                            Edit Profile
+                        </a>
+                        <i class="fa fa-cog settings-icon"></i>
+                    </div>
+                </div>
+
+                <div class="stats-row">
+                    <div class="stat"><strong>{{ data.total }}</strong> post{{ data.total|pluralize }}</div>
+                    <div class="stat"><strong>0</strong> followers</div>
+                    <div class="stat"><strong>0</strong> following</div>
+                </div>
+
+                <div class="bio-section">
+                    <div class="full-name">{{ request.user.get_full_name|default:request.user.username }}</div>
+                    {% if request.user.profile.dob %}
+                        <div class="bio-text">
+                            <i class="fa fa-birthday-cake"></i>{{ request.user.profile.dob }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tabs-section">
+        <div class="tabs">
+            <button class="tab active"><i class="fa fa-th"></i> POSTS</button>
+            <button class="tab"><i class="fa fa-bookmark"></i> SAVED</button>
+            <button class="tab"><i class="fa fa-user-tag"></i> TAGGED</button>
+        </div>
+    </div>
+
+    {% if data.blogs %}
+        <div class="posts-grid">
+            {% for blog in data.blogs %}
+                <a href="{% url 'blog_detail' blog.id %}" class="post-item" title="{{ blog.name }}">
+                    {% if blog.image %}
+                        <img src="{{ blog.image.url }}" alt="{{ blog.name }}">
+                    {% else %}
+                        <img src="{% static 'images/default_blog.png' %}" alt="{{ blog.name }}">
+                    {% endif %}
+                    <div class="post-overlay">
+                        <div class="blog-title-overlay">{{ blog.name }}</div>
+                        <div class="blog-excerpt-overlay">{{ blog.messeage|truncatewords:15 }}</div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-posts">
+            <i class="fa fa-camera"></i>
+            <h3>No Posts Yet</h3>
+            <p>Start sharing your thoughts and experiences with the world</p>
+            <a href="{% url 'add_blog' %}" class="create-post-btn">
+                <i class="fa fa-plus"></i> Create Your First Post
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock content %}

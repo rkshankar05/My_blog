@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Search results</title>
+{% endblock title %}
+
+{% block css %}
+<style>
+.search-section {
+    min-height: calc(100vh - 70px);
+    padding: 80px 24px 40px;
+}
+
+.search-container {
+    max-width: 1150px;
+    margin: 0 auto;
+}
+
+/* header */
+.search-heading {
+    margin-bottom: 24px;
+}
+
+.search-heading h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.search-heading p {
+    font-size: 1rem;
+    color: #9ca3af;
+}
+
+/* grid of simple cards */
+.search-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+}
+
+.search-card {
+    background: #020617;
+    border-radius: 16px;
+    border: 1px solid #1f2937;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.7);
+    padding: 16px 16px 14px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.search-card-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.search-card-meta {
+    font-size: 0.85rem;
+    color: #9ca3af;
+    margin-bottom: 10px;
+}
+
+.search-card-excerpt {
+    font-size: 0.95rem;
+    color: #cbd5e1;
+    margin-bottom: 12px;
+}
+
+.search-card-footer {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: #9ca3af;
+}
+
+.search-card-link {
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    background: linear-gradient(45deg, #1c3f28ff, #1f994aff); /* same as blog-btn-read */
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    transition: opacity 0.2s ease;
+}
+
+.search-card-link:hover {
+    opacity: 0.85;
+    text-decoration: underline;
+}
+
+
+/* empty */
+.search-empty {
+    margin-top: 60px;
+    text-align: center;
+}
+
+.search-empty h3 {
+    font-size: 1.6rem;
+    margin-bottom: 8px;
+}
+
+.search-empty p {
+    font-size: 0.95rem;
+    color: #9ca3af;
+}
+
+@media (max-width: 768px) {
+    .search-section {
+        padding: 80px 14px 30px;
+    }
+
+    .search-heading h2 {
+        font-size: 1.7rem;
+    }
+}
+</style>
+{% endblock css %}
+
+{% block content %}
+<div class="search-section">
+    <div class="search-container">
+
+        <div class="search-heading">
+            <h2>Search results</h2>
+            {% if query %}
+                <p>Browse posts that match "{{ query }}".</p>
+            {% else %}
+                <p>Enter a keyword in the search box to find posts.</p>
+            {% endif %}
+        </div>
+
+        {% if results %}
+            <div class="search-grid">
+                {% for blog in results %}
+                    <div class="search-card">
+                        <div class="search-card-title">{{ blog.name }}</div>
+                        <div class="search-card-meta">
+                            by {{ blog.user.username }}
+                        </div>
+                        <div class="search-card-excerpt">
+                            {{ blog.messeage|truncatewords:25 }}
+                        </div>
+                        <div class="search-card-footer">
+                            <span>Blog post</span>
+                            <a href="{% url 'blog_detail' blog.id %}" class="search-card-link">
+                                Read more →
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="search-empty">
+                <h3>No results found</h3>
+                <p>Try different keywords or check your spelling.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}

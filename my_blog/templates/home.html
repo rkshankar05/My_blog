@@ -1,0 +1,332 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Home</title>
+{% endblock title %}
+
+{% block css %}
+<style>
+    /* ============ HOME PAGE STYLES ============ */
+    
+    /* Layout */
+    .home-wrapper {
+        padding: 80px 20px 40px;
+        min-height: calc(100vh - 70px);
+    }
+
+    .home-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 15px;
+    }
+
+    /* Toast Messages */
+    .toast-container {
+        position: fixed;
+        top: 90px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .toast-msg {
+        min-width: 260px;
+        max-width: 420px;
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+        border: 1px solid transparent;
+        backdrop-filter: blur(8px);
+        text-align: center;
+    }
+
+    .toast-success {
+        background: rgba(34, 197, 94, 0.1);
+        border-color: rgba(34, 197, 94, 0.5);
+        color: #bbf7d0;
+    }
+
+    .toast-error {
+        background: rgba(239, 68, 68, 0.1);
+        border-color: rgba(239, 68, 68, 0.5);
+        color: #fecaca;
+    }
+
+    /* Header */
+    .home-header {
+        text-align: center;
+        margin-bottom: 25px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .home-header h2 {
+        font-size: clamp(2rem, 4vw, 3rem);
+        background: linear-gradient(45deg, #5670e0ff 0%, #4e3963ff 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 0 30px rgba(102, 126, 234, 0.5);
+        margin: 0;
+    }
+
+    .home-header a {
+        color: #2a4777ff;
+        font-size: 14px;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .home-header a:hover {
+        text-decoration: underline;
+    }
+
+    /* Blog Grid */
+    .blog-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 25px;
+        padding-bottom: 40px;
+    }
+
+    /* Blog Cards */
+    .blog-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(15px);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        height: 450px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .blog-card:hover {
+        transform: translateY(-15px) scale(1.02);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+        border-color: rgba(102, 126, 234, 0.3);
+    }
+
+    .blog-card-image-wrapper {
+        height: 280px;
+        overflow: hidden;
+        position: relative;
+        flex-shrink: 0;
+        background: #020617;
+    }
+
+    .blog-card-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s ease;
+    }
+
+    .blog-card:hover .blog-card-image {
+        transform: scale(1.1);
+    }
+
+    .blog-card-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(transparent, rgba(0,0,0,0.8));
+        padding: 25px 20px 20px;
+        color: white;
+    }
+
+    .blog-card-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .blog-card-content {
+        padding: 25px 25px 30px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    /* Buttons */
+    .blog-card-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: auto;
+    }
+
+    .blog-btn-form {
+        flex: 1;
+        margin: 0;
+        display: flex;
+    }
+
+    .blog-btn {
+        flex: 1;
+        padding: 10px 10px;
+        border: none;
+        border-radius: 15px;
+        font-weight: 600;
+        font-size: 1.3rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-align: center;
+    }
+
+    .blog-btn:hover {
+        transform: translateY(-2px);
+        text-decoration: none;
+    }
+
+    .blog-btn-read {
+        background: linear-gradient(45deg, #092011ff, #396348ff);
+        color: white;
+    }
+
+    .blog-btn-read:hover {
+        box-shadow: 0 10px 25px rgba(34, 197, 94, 0.4);
+    }
+
+    .blog-btn-edit {
+        background: linear-gradient(45deg, #232429ff, #764ba2);
+        color: white;
+    }
+
+    .blog-btn-edit:hover {
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .blog-btn-delete {
+        background: linear-gradient(45deg, #e2b4b4ff, #2e2524ff);
+        color: white;
+    }
+
+    .blog-btn-delete:hover {
+        box-shadow: 0 10px 25px rgba(255, 107, 107, 0.4);
+    }
+
+    /* Empty State */
+    .no-blogs {
+        text-align: center;
+        padding: 80px 20px;
+        color: #9ca3af;
+        font-size: 1.2rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .home-wrapper {
+            padding: 70px 15px 30px;
+        }
+
+        .blog-grid {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .blog-card {
+            height: 420px;
+        }
+
+        .blog-card-content {
+            padding: 20px;
+        }
+
+        .toast-container {
+            top: 80px;
+        }
+    }
+</style>
+{% endblock css %}
+
+{% block content %}
+<div class="home-wrapper">
+    <div class="home-container">
+
+        {# Toast messages #}
+        {% if messages %}
+        <div class="toast-container" id="toast-container">
+            {% for message in messages %}
+                <div class="toast-msg {% if message.tags == 'success' %}toast-success{% else %}toast-error{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="home-header">
+            <h2>Latest Blogs</h2>
+        </div>
+
+        {% if blogs %}
+        <div class="blog-grid">
+            {% for blog in blogs %}
+            <div class="blog-card">
+                <div class="blog-card-image-wrapper">
+                    {% if blog.image %}
+                        <img src="{{ blog.image.url }}" alt="{{ blog.name }}" class="blog-card-image">
+                    {% else %}
+                        <img src="{% static 'img/default_blog.png' %}" alt="{{ blog.name }}" class="blog-card-image">
+                    {% endif %}
+                    <div class="blog-card-overlay">
+                        <h3 class="blog-card-title">{{ blog.name }}</h3>
+                    </div>
+                </div>
+                <div class="blog-card-content">
+                    <div class="blog-card-buttons">
+                        <a href="{% url 'blog_detail' blog.id %}" class="blog-btn blog-btn-read">Read</a>
+                        {% if user == blog.user %}
+                            <a href="{% url 'edit' blog.id %}" class="blog-btn blog-btn-edit">Edit</a>
+                            <a href="{% url 'delete' blog.id %}" class="blog-btn blog-btn-delete">Delete</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-blogs">
+            No blogs yet. Start by adding your first post!
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+{# Auto-hide toast script #}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+
+        setTimeout(function () {
+            container.style.transition = 'opacity 0.3s ease';
+            container.style.opacity = '0';
+            setTimeout(function () {
+                if (container && container.parentNode) {
+                    container.parentNode.removeChild(container);
+                }
+            }, 300);
+        }, 2000);
+    });
+</script>
+{% endblock content %}

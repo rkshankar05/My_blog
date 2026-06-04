@@ -1,0 +1,267 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>{{ blog.name }} - Blog Detail</title>
+{% endblock title %}
+
+{% block css %}
+<style>
+    body {
+        background: #020617;
+        color: #e5e7eb;
+    }
+
+    .detail-shell {
+        min-height: calc(100vh - 70px);
+        padding: 88px 18px 44px;
+    }
+
+    .detail-container {
+        width: min(100%, 980px);
+        margin: 0 auto;
+    }
+
+    .detail-topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 40px;
+        padding: 0 14px;
+        border-radius: 8px;
+        background: #0f172a;
+        border: 1px solid #243244;
+        color: #cbd5e1;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .back-link:hover {
+        color: #fff;
+        border-color: #475569;
+        text-decoration: none;
+    }
+
+    .owner-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .action-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        padding: 0 16px;
+        border-radius: 8px;
+        color: #fff;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.92rem;
+    }
+
+    .edit-link {
+        background: #4338ca;
+    }
+
+    .delete-link {
+        background: #b91c1c;
+    }
+
+    .detail-article {
+        overflow: hidden;
+        border-radius: 8px;
+        border: 1px solid #243244;
+        background: #0f172a;
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+    }
+
+    .hero-image {
+        position: relative;
+        min-height: 280px;
+        max-height: 520px;
+        background: #111827;
+        overflow: hidden;
+    }
+
+    .hero-image img {
+        width: 100%;
+        height: 100%;
+        min-height: 280px;
+        max-height: 520px;
+        object-fit: cover;
+        display: block;
+    }
+
+    .hero-scrim {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(2, 6, 23, 0.12), rgba(2, 6, 23, 0.88));
+    }
+
+    .hero-title {
+        position: absolute;
+        left: 28px;
+        right: 28px;
+        bottom: 24px;
+    }
+
+    .hero-title h1 {
+        margin: 0;
+        font-size: clamp(2rem, 5vw, 4rem);
+        line-height: 1.05;
+        font-weight: 800;
+        color: #fff;
+        text-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
+        overflow-wrap: anywhere;
+    }
+
+    .detail-body {
+        padding: 30px;
+    }
+
+    .author-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid #243244;
+        margin-bottom: 24px;
+    }
+
+    .author-avatar {
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        overflow: hidden;
+        background: #1f2937;
+        border: 1px solid #334155;
+        flex: 0 0 auto;
+    }
+
+    .author-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .author-name {
+        color: #f8fafc;
+        font-weight: 700;
+    }
+
+    .author-role {
+        color: #94a3b8;
+        font-size: 0.88rem;
+    }
+
+    .detail-content {
+        color: #dbe4ef;
+        font-size: 1.04rem;
+        line-height: 1.85;
+        white-space: pre-line;
+        overflow-wrap: anywhere;
+    }
+
+    .no-image-title {
+        padding: 34px 30px 0;
+    }
+
+    .no-image-title h1 {
+        color: #fff;
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        margin: 0;
+        overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 640px) {
+        .detail-shell {
+            padding: 76px 12px 28px;
+        }
+
+        .detail-topbar {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .owner-actions,
+        .back-link,
+        .action-link {
+            width: 100%;
+        }
+
+        .hero-title {
+            left: 18px;
+            right: 18px;
+            bottom: 18px;
+        }
+
+        .detail-body {
+            padding: 22px;
+        }
+    }
+</style>
+{% endblock css %}
+
+{% block content %}
+<main class="detail-shell">
+    <div class="detail-container">
+        <div class="detail-topbar">
+            <a href="{{ back_url }}" class="back-link">Back</a>
+
+            {% if user == blog.user %}
+            <div class="owner-actions">
+                <a href="{% url 'edit' blog.id %}" class="action-link edit-link">Edit</a>
+                <a href="{% url 'delete' blog.id %}" class="action-link delete-link">Delete</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <article class="detail-article">
+            {% if blog.image %}
+            <div class="hero-image">
+                <img src="{{ blog.image.url }}" alt="{{ blog.name }}">
+                <div class="hero-scrim"></div>
+                <div class="hero-title">
+                    <h1>{{ blog.name }}</h1>
+                </div>
+            </div>
+            {% else %}
+            <div class="no-image-title">
+                <h1>{{ blog.name }}</h1>
+            </div>
+            {% endif %}
+
+            <div class="detail-body">
+                <div class="author-row">
+                    <div class="author-avatar">
+                        {% if blog.user.profile.profile_image %}
+                            <img src="{{ blog.user.profile.profile_image.url }}" alt="{{ blog.user.username }}">
+                        {% else %}
+                            <img src="{% static 'images/default_profile.png' %}" alt="{{ blog.user.username }}">
+                        {% endif %}
+                    </div>
+                    <div>
+                        <div class="author-name">{{ blog.user.username }}</div>
+                        <div class="author-role">Author</div>
+                    </div>
+                </div>
+
+                <div class="detail-content">
+                    {{ blog.messeage }}
+                </div>
+            </div>
+        </article>
+    </div>
+</main>
+{% endblock content %}
