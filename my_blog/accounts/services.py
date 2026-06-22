@@ -1,6 +1,21 @@
+import logging
+
 from django.db.models import Q
 
 from .models import Blog
+
+logger = logging.getLogger(__name__)
+
+
+def delete_replaced_file(old_name, storage, new_file):
+    if not old_name or not storage or not new_file:
+        return
+
+    if old_name != new_file.name:
+        try:
+            storage.delete(old_name)
+        except Exception:
+            logger.exception("Failed to delete replaced file: %s", old_name)
 
 
 def get_all_posts():

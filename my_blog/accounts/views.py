@@ -11,7 +11,7 @@ from . models import Blog,Profile
 from django.utils import timezone
 import secrets
 from .permissions import is_blog_owner
-from .services import get_all_posts, get_user_posts, search_posts
+from .services import delete_replaced_file, get_all_posts, get_user_posts, search_posts
 from .validators import validate_image
 
 OTP_EXPIRY_MINUTES = 10
@@ -130,6 +130,8 @@ def edit(request,id):
         name = request.POST["name"].strip()
         messeage = request.POST["messeage"].strip()
         image = request.FILES.get('image')
+        old_image_name = blog.image.name
+        old_image_storage = blog.image.storage
 
         if image:
             valid_image, image_error = validate_image(image)
@@ -140,6 +142,8 @@ def edit(request,id):
         blog.name = name
         blog.messeage = messeage
         blog.save()
+        if image:
+            delete_replaced_file(old_image_name, old_image_storage, blog.image)
         return redirect('gallery')
     
     return render(request,'edit.html',{"blog":blog})
@@ -201,6 +205,8 @@ def edit_profile(request,id):
             email = request.POST.get('email', '').strip()
             dob = request.POST.get('birthday')
             image = request.FILES.get('profile_image')
+            old_profile_image_name = profile.profile_image.name
+            old_profile_image_storage = profile.profile_image.storage
 
             if User.objects.exclude(id=user.id).filter(username=username).exists():
                 messages.error(request, "Username already exists")
@@ -225,6 +231,12 @@ def edit_profile(request,id):
 
             user.save()
             profile.save()
+            if image:
+                delete_replaced_file(
+                    old_profile_image_name,
+                    old_profile_image_storage,
+                    profile.profile_image,
+                )
 
             return redirect('profile')
     return render(request,"edit_profile.html",{"user":user})

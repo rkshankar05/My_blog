@@ -86,3 +86,21 @@ http://127.0.0.1:8000/
 - If Cloudinary credentials are not set, uploaded media is stored locally.
 - Keep `DEBUG=False` and set a strong `SECRET_KEY` before deploying.
 
+## Render Deploy
+
+This repo includes `render.yaml`, `build.sh`, `Procfile`, and `runtime.txt`.
+
+Set these Render environment variables:
+
+```env
+DEBUG=False
+DATABASE_URL=your-supabase-postgres-connection-string
+DB_SSL_REQUIRE=True
+EMAIL_HOST_USER=your-email@gmail.com
+EMAIL_HOST_PASSWORD=your-app-password
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
+```
+
+Render provides `RENDER_EXTERNAL_HOSTNAME` automatically, and the app uses it for `ALLOWED_HOSTS` and CSRF trusted origins.
