@@ -19,6 +19,8 @@ A Django blog application with user authentication, OTP-based signup, profile pa
 - Python
 - Django 5.2.1
 - SQLite for local development
+- Supabase PostgreSQL for production database storage
+- Cloudinary for uploaded media storage
 - Pillow for image validation
 - SMTP email support
 
@@ -46,6 +48,15 @@ ALLOWED_HOSTS=localhost,127.0.0.1
 EMAIL_HOST_USER=your-email@gmail.com
 EMAIL_HOST_PASSWORD=your-app-password
 SESSION_COOKIE_AGE=900
+
+# Supabase database
+DATABASE_URL=postgresql://postgres.your-project-ref:your-password@aws-0-your-region.pooler.supabase.com:6543/postgres
+DB_SSL_REQUIRE=True
+
+# Cloudinary media uploads
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
 ```
 
 4. Run migrations:
@@ -71,4 +82,7 @@ http://127.0.0.1:8000/
 
 - Local database files, uploaded media, virtual environments, cache files, and secrets are ignored by git.
 - Use a Gmail app password or another SMTP provider for email features.
+- If `DATABASE_URL` is not set, the app uses local SQLite.
+- If Cloudinary credentials are not set, uploaded media is stored locally.
 - Keep `DEBUG=False` and set a strong `SECRET_KEY` before deploying.
+

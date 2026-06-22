@@ -1,4 +1,8 @@
 Django==5.2.1
 Pillow
+cloudinary
+dj-database-url
+django-cloudinary-storage
 psycopg2-binary
 python-dotenv
+whitenoise
