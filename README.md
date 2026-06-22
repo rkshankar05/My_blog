@@ -88,7 +88,7 @@ http://127.0.0.1:8000/
 
 ## Render Deploy
 
-This repo includes `render.yaml`, `build.sh`, `Procfile`, and `runtime.txt`.
+This repo includes  `build.sh`.
 
 Set these Render environment variables:
 
